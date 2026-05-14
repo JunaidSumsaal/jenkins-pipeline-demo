@@ -45,6 +45,3 @@ pipeline {
         }
     }
 }
-// jenkin testing
-//jjjjjjjj
-// junaid
