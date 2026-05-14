@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    triggers {
+        githubPush()
+    }
+    
     stages {
         stage('Clone') {
             steps {
@@ -41,5 +45,3 @@ pipeline {
         }
     }
 }
-
-// Testing webhook trigger junaid
