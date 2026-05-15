@@ -1,67 +1,49 @@
 pipeline {
     agent any
 
-    options {
-        timestamps()
-        buildDiscarder(logRotator(numToKeepStr: '10'))
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Step 1: Environment Check') {
             steps {
-                echo 'Checking out code...'
-                checkout scm
+                echo "Building on: ${env.NODE_NAME}"
+                sh 'java -version'
+                sh 'git --version'
             }
         }
 
-        stage('Show Info') {
+        stage('Step 2: Build Simulation') {
             steps {
-                sh '''
-                    echo "Current directory:"
-                    pwd
-                    echo ""
-                    echo "Files:"
-                    ls -lah
-                    echo ""
-                    echo "Git status:"
-                    git status || true
-                    echo ""
-                    echo "Latest commit:"
-                    git log -1 --oneline || true
-                '''
+                echo 'Simulating application build...'
+                // This creates a fake "app.txt" file
+                sh 'echo "Build Version 1.0" > app.txt'
             }
         }
 
-        stage('Build') {
+        stage('Step 3: Test Simulation') {
             steps {
-                sh '''
-                    echo "Starting build..."
-                    sleep 2
-                    echo "Build completed successfully."
-                '''
+                echo 'Running automated tests...'
+                sh 'grep "Build Version" app.txt'
+                echo 'Tests Passed ✅'
             }
         }
 
-        stage('Test') {
+        stage('Step 4: Deployment') {
             steps {
-                sh '''
-                    echo "Running tests..."
-                    sleep 2
-                    echo "Tests passed."
-                '''
+                echo 'Deploying to Production...'
+                sh 'ls -l app.txt'
             }
         }
     }
 
+    // This block runs AFTER all stages
     post {
+        always {
+            echo 'I always run, no matter what! ✨'
+        }
         success {
-            echo 'Build finished successfully.'
+            echo 'Build Successful! Great job, Junaid! ✅'
         }
         failure {
-            echo 'Build failed. Check the console output.'
-        }
-        always {
-            echo 'Pipeline run completed.'
+            echo 'Build Failed! Check the logs above. ❌'
         }
     }
 }
